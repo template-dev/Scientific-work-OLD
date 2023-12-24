@@ -152,6 +152,7 @@
     <ClCompile Include="external-libraries\imgui\imgui_tables.cpp" />
     <ClCompile Include="external-libraries\imgui\imgui_widgets.cpp" />
     <ClCompile Include="IWindow.hpp" />
+    <ClCompile Include="Logger.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="UserInterface.cpp" />
     <ClCompile Include="Window.cpp" />
@@ -169,7 +170,9 @@
     <ClInclude Include="external-libraries\imgui\imstb_rectpack.h" />
     <ClInclude Include="external-libraries\imgui\imstb_textedit.h" />
     <ClInclude Include="external-libraries\imgui\imstb_truetype.h" />
+    <ClInclude Include="ILogger.hpp" />
     <ClInclude Include="IUserInterface.hpp" />
+    <ClInclude Include="Logger.hpp" />
     <ClInclude Include="UserInterface.hpp" />
     <ClInclude Include="Window.hpp" />
   </ItemGroup>

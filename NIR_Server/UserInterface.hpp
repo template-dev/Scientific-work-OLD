@@ -6,27 +6,35 @@
 
 #include "IUserInterface.hpp"
 #include "Window.hpp"
+#include "Logger.hpp"
 
 #include "Fonts.hpp"
 
+#include <cstring>
+#include <memory>
+
 class Window;
+class Logger;
 class UserInterface : public IUserInterface
 {
 public:
-	UserInterface(const Window* win);
+	explicit UserInterface(const Window* win);
 
-	void onInit()	 override;
+	void onInit()		 override;
 	void onRender()  override;
 	void onDestroy() override;
 
 private:
 	void onDrawElements();
 
-private:
 	const Window* m_window;
 	ImGuiWindowFlags m_windowFlags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking;
 
+	std::unique_ptr<Logger> m_logger = std::make_unique<Logger>();
+
 	My_Fonts_ST m_fonts;
+
+	bool isServerStart = false;
 
 	static bool m_optFullScreen;
 	static bool m_dockspaceOpen;

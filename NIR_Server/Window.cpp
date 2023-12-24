@@ -25,7 +25,7 @@ void Window::onInit()
         return;
 
     glfwMakeContextCurrent(m_window);
-    glfwSwapInterval(1); // Enable vsync
+    glfwSwapInterval(1);
 
     m_userInterface->onInit();
 }
@@ -38,7 +38,6 @@ void Window::onRender()
         m_frameStart = std::chrono::high_resolution_clock::now();
         glfwPollEvents();
 
-        // ImGui
         m_userInterface->onRender();
 
         int display_w, display_h;
@@ -60,9 +59,7 @@ void Window::onRender()
 
 void Window::onDestroy()
 {
-    // Cleanup
     m_userInterface->onDestroy();
-
     glfwDestroyWindow(m_window);
     glfwTerminate();
 }

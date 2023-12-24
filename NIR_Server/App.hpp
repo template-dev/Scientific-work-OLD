@@ -17,5 +17,5 @@ private:
 	int m_width;
 	int m_height;
 	const char* m_title;
-	std::shared_ptr<IWindow> m_window;
+	std::unique_ptr<IWindow> m_window;
 };

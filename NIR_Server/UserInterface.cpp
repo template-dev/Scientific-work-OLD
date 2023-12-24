@@ -70,12 +70,11 @@ void UserInterface::onInit()
   style.Colors[ImGuiCol_ModalWindowDimBg] = ImVec4(0.80f, 0.80f, 0.80f, 0.35f);
   style.GrabRounding = style.FrameRounding = 2.3f;
 #pragma endregion "ImGui styles"
-  
+    
   ImGui_ImplGlfw_InitForOpenGL(m_window->getWindowPtr(), true);
 
   const char* glsl_version = "#version 330";
   ImGui_ImplOpenGL3_Init(glsl_version);
-
 }
 
 void UserInterface::onRender()
@@ -120,7 +119,13 @@ void UserInterface::onDrawElements()
     ImGui::PushStyleColor(ImGuiCol_ButtonActive, startButtonColorActived);
     if (ImGui::Button("START", ImVec2(-1, 50.0f)))
     {
-
+      if (!isServerStart)
+      {
+        const char* msg = "The server is running!\n";
+        m_logger->onAppendMsgToLog(msg);
+        m_logger->onWriteToFile(msg);
+        isServerStart = true;
+      }
     }
     ImGui::PopStyleColor(3);
 
@@ -129,7 +134,13 @@ void UserInterface::onDrawElements()
     ImGui::PushStyleColor(ImGuiCol_ButtonActive, stopButtonColorActived);
     if (ImGui::Button("STOP", ImVec2(-1, 50.0f)))
     {
-
+      if (isServerStart)
+      {
+        const char* msg = "The server is stopped!\n";
+        m_logger->onAppendMsgToLog(msg);
+        m_logger->onWriteToFile(msg);
+        isServerStart = false;
+      }
     }
     ImGui::PopStyleColor(3);
   } ImGui::End();
@@ -137,8 +148,8 @@ void UserInterface::onDrawElements()
   if (ImGui::Begin("Logs"))
   {
     ImVec2 size = ImGui::GetContentRegionAvail();
-    static char buffer[1024] = "";
-    ImGui::InputTextMultiline("##LogText", buffer, IM_ARRAYSIZE(buffer), size);
+    
+    ImGui::InputTextMultiline("##LogText", m_logger->getBuffer(), IM_ARRAYSIZE(m_logger->getBuffer()), size, ImGuiInputTextFlags_ReadOnly);
 
   } ImGui::End();
 }

@@ -13,7 +13,7 @@
 class Window : public  IWindow
 {
 public:
-	Window() = default;
+	explicit Window() = default;
 	explicit Window(int weight, int height, const char* title);
 
 	void onInit()		 override;

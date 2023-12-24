@@ -7,7 +7,7 @@ App::App(int width, int height, const char* title)
 	, m_height(height)
 	, m_title(title)
 {
-	m_window = std::make_shared<Window>(width, height, title);
+	m_window = std::make_unique<Window>(width, height, title);
 }
 
 void App::onInit()

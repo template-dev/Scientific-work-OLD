@@ -1,4 +1,5 @@
 #include "App.hpp"
+#include <iostream>
 
 int main()
 {
@@ -10,7 +11,7 @@ int main()
 	}
 	catch (std::exception& ex)
 	{
-		ex.what();
+		std::cerr << ex.what() << std::endl;
 	}
 
 	return 0;
