@@ -6,6 +6,7 @@ bool UserInterface::m_optPadding = false;
 
 UserInterface::UserInterface(const Window* win)
   : m_window(win)
+  , m_videoStreamer(std::make_shared<VideoStreamer>(this))
 {}
 
 void UserInterface::onInit()
@@ -70,7 +71,7 @@ void UserInterface::onInit()
   style.Colors[ImGuiCol_ModalWindowDimBg] = ImVec4(0.80f, 0.80f, 0.80f, 0.35f);
   style.GrabRounding = style.FrameRounding = 2.3f;
 #pragma endregion "ImGui styles"
-    
+
   ImGui_ImplGlfw_InitForOpenGL(m_window->getWindowPtr(), true);
 
   const char* glsl_version = "#version 330";
@@ -109,7 +110,15 @@ void UserInterface::onDrawElements()
 
   if (ImGui::Begin("Video Stream"))
   {
-
+    m_imageSize = ImGui::GetContentRegionAvail();
+    //ImGui::Image((void*)(intptr_t)m_videoTexture, imageSize);
+    if (m_videoTexture != 0)
+    {
+      ImGui::Image((void*)(intptr_t)m_videoTexture, m_imageSize);
+      //ImGui::Text("Texture Size: %dx%d", static_cast<int>(imageSize.x), static_cast<int>(imageSize.y));
+    }
+    else
+      ImGui::Text("Invalid texture ID");
   } ImGui::End();
 
   if (ImGui::Begin("Functionals"))
@@ -119,12 +128,14 @@ void UserInterface::onDrawElements()
     ImGui::PushStyleColor(ImGuiCol_ButtonActive, startButtonColorActived);
     if (ImGui::Button("START", ImVec2(-1, 50.0f)))
     {
-      if (!isServerStart)
+      if (!m_isServerRunning)
       {
         const char* msg = "The server is running!\n";
         m_logger->onAppendMsgToLog(msg);
         m_logger->onWriteToFile(msg);
-        isServerStart = true;
+        m_videoStreamer->onRecieveData();
+        m_isServerRunning = true;
+        m_videoStreamer->setStreaming(true);
       }
     }
     ImGui::PopStyleColor(3);
@@ -134,12 +145,14 @@ void UserInterface::onDrawElements()
     ImGui::PushStyleColor(ImGuiCol_ButtonActive, stopButtonColorActived);
     if (ImGui::Button("STOP", ImVec2(-1, 50.0f)))
     {
-      if (isServerStart)
+      if (m_isServerRunning)
       {
         const char* msg = "The server is stopped!\n";
         m_logger->onAppendMsgToLog(msg);
         m_logger->onWriteToFile(msg);
-        isServerStart = false;
+        m_isServerRunning = false;
+        m_videoStreamer->setStreaming(false);
+        m_videoStreamer->onDestroy();
       }
     }
     ImGui::PopStyleColor(3);
@@ -152,4 +165,62 @@ void UserInterface::onDrawElements()
     ImGui::InputTextMultiline("##LogText", m_logger->getBuffer(), IM_ARRAYSIZE(m_logger->getBuffer()), size, ImGuiInputTextFlags_ReadOnly);
 
   } ImGui::End();
+}
+
+GLuint UserInterface::onCreateTexture(const void* frameData, int width, int height)
+{
+  GLuint textureID;
+  glGenTextures(1, &textureID);
+
+  GLenum error = glGetError();
+  if (error != GL_NO_ERROR) {
+    std::cerr << "OpenGL error after glGenTextures: " << error << std::endl;
+    const char* msg = "OpenGL error after glGenTextures\n";
+    m_logger->onAppendMsgToLog(msg);
+    m_logger->onWriteToFile(msg);
+  }
+
+  glBindTexture(GL_TEXTURE_2D, textureID);
+
+  if (error != GL_NO_ERROR) {
+    std::cerr << "OpenGL error after glBindTexture: " << error << std::endl;
+    const char* msg = "OpenGL error after glBindTexture\n";
+    m_logger->onAppendMsgToLog(msg);
+    m_logger->onWriteToFile(msg);
+  }
+
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, frameData);
+
+  if (error != GL_NO_ERROR) {
+    std::cerr << "OpenGL error: " << error << std::endl;
+    const char* msg = "OpenGL error: " + error + '\n';
+    m_logger->onAppendMsgToLog(msg);
+    m_logger->onWriteToFile(msg);
+  }
+
+  glBindTexture(GL_TEXTURE_2D, 0);
+
+  return textureID;
+}
+
+void UserInterface::onFrameReceived(const void* frameData, int width, int height)
+{
+  if (m_videoTexture == 0) {
+    m_videoTexture = onCreateTexture(frameData, width, height);
+  }
+  else {
+    glBindTexture(GL_TEXTURE_2D, m_videoTexture);
+    glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, width, height, GL_RGBA, GL_UNSIGNED_BYTE, frameData);
+    GLenum error = glGetError();
+    if (error != GL_NO_ERROR) {
+      std::cerr << "OpenGL error after glTexSubImage2D: " << error << std::endl;
+      const char* msg = "OpenGL error after glTexSubImage2D\n";
+      m_logger->onAppendMsgToLog(msg);
+      m_logger->onWriteToFile(msg);
+    }
+    glBindTexture(GL_TEXTURE_2D, 0);
+  }
 }

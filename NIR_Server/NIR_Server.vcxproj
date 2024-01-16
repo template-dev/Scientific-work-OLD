@@ -70,6 +70,10 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <IncludePath>D:\gstreamer\1.0\msvc_x86_64\include\glib-2.0;D:\gstreamer\1.0\msvc_x86_64\include\gstreamer-1.0;D:\gstreamer\1.0\msvc_x86_64\lib\glib-2.0\include;D:\gstreamer\1.0\msvc_x86_64\lib\gstreamer-1.0\include;$(IncludePath)</IncludePath>
+    <LibraryPath>D:\gstreamer\1.0\msvc_x86_64\lib;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
@@ -113,13 +117,13 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>D:\gstreamer\1.0\msvc_x86_64\include;D:\gstreamer\1.0\msvc_x86_64\include\glib-2.0;D:\gstreamer\1.0\msvc_x86_64\include\gstreamer-1.0;D:\VS_Projects\NIR_Server\NIR_Server\external-libraries\glfw-3.3.8.bin.WIN64\include;external-libraries/imgui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <LanguageStandard>stdcpp17</LanguageStandard>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>D:\gstreamer\1.0\msvc_x86_64\lib\glib-2.0\include;D:\gstreamer\1.0\msvc_x86_64\lib;D:\gstreamer\1.0\msvc_x86_64\lib\gstreamer-1.0;D:\VS_Projects\NIR_Server\NIR_Server\external-libraries\glfw-3.3.8.bin.WIN64\lib-vc2022;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>gstreamer-1.0.lib;glib-2.0.lib;glfw3.lib;opengl32.lib;user32.lib;gdi32.lib;shell32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>D:\gstreamer\1.0\msvc_x86_64\lib\glib-2.0;D:\gstreamer\1.0\msvc_x86_64\lib\glib-2.0\include;D:\gstreamer\1.0\msvc_x86_64\lib;D:\gstreamer\1.0\msvc_x86_64\lib\gstreamer-1.0;D:\VS_Projects\NIR_Server\NIR_Server\external-libraries\glfw-3.3.8.bin.WIN64\lib-vc2022;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>gstreamer-1.0.lib;glib-2.0.lib;glfw3.lib;opengl32.lib;user32.lib;gdi32.lib;shell32.lib;D:\gstreamer\1.0\msvc_x86_64\lib\*.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -154,6 +158,7 @@
     <ClCompile Include="IWindow.hpp" />
     <ClCompile Include="Logger.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="VideoStreamer.cpp" />
     <ClCompile Include="UserInterface.cpp" />
     <ClCompile Include="Window.cpp" />
   </ItemGroup>
@@ -171,8 +176,10 @@
     <ClInclude Include="external-libraries\imgui\imstb_textedit.h" />
     <ClInclude Include="external-libraries\imgui\imstb_truetype.h" />
     <ClInclude Include="ILogger.hpp" />
+    <ClInclude Include="IVideoStreamer.hpp" />
     <ClInclude Include="IUserInterface.hpp" />
     <ClInclude Include="Logger.hpp" />
+    <ClInclude Include="VideoStreamer.hpp" />
     <ClInclude Include="UserInterface.hpp" />
     <ClInclude Include="Window.hpp" />
   </ItemGroup>

@@ -1,7 +1,5 @@
 #include "App.hpp"
 
-#include <gst/gst.h>
-
 App::App(int width, int height, const char* title)
 	: m_width(width)
 	, m_height(height)
